@@ -1,0 +1,3 @@
+# Test Sites
+https://freebsd.org/
+https://openbsd.org
