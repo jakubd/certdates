@@ -1,3 +1,5 @@
+[![License.md](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 # certdates
 
 Check the certificate validity period left in all your domains.  Give this script a 
