@@ -45,12 +45,12 @@ highlighting cases where there is less than 60 days of certificate validity.
 You can compile this to a binary with:
 
 ```
-go build main.go
+go build certdates.go
 ```
 
 should make a binary in the same directory:
 
 ```bash
-./main
+./certdates
 ```
 
