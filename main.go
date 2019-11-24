@@ -1,7 +1,7 @@
 package main
 
 import (
-	"certdates/certdates"
+	"certdates/cert_handling"
 	"flag"
 	"fmt"
 	"os"
@@ -17,6 +17,6 @@ func main(){
 		fmt.Printf("usage: %s --domains=[domains txt file] --t=[threshold int]", filepath.Base(os.Args[0]))
 		os.Exit(1)
 	} else {
-		certdates.OutputCertificateValidityReport(*domainsTextFilePtr, *thresholdPtr)
+		cert_handling.OutputCertificateValidityReport(*domainsTextFilePtr, *thresholdPtr)
 	}
 }

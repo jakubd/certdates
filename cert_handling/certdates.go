@@ -1,4 +1,4 @@
-package certdates
+package cert_handling
 
 import (
 	"bufio"

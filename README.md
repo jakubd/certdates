@@ -2,8 +2,10 @@
 
 # certdates
 
-Check the certificate validity period left in all your domains.  Give this script a 
-text file of domains such as this:
+Check the certificate validity period left in all your domains.  
+
+
+Simply give this script a text file of domains such as this:
 
 ```
 https://freebsd.org
