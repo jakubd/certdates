@@ -31,7 +31,7 @@ should make a binary in the same directory
 
 Will result in this type of output
 
-TODO: put sample image here
+![output-img.png](output-img.png)
 
 or just 
 
