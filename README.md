@@ -2,41 +2,55 @@
 
 # certdates
 
-Check the certificate validity period left in all your domains.  
+Check the certificate validity period left in all your domains.  Mainly used for checking if auto-renewal of LetsEncrypt
+certs are proceeding as expected.
 
+Simply give this script etiher a domain:
 
-Simply give this script a text file of domains such as this:
+Input:
+
+```
+./certdates https://freebsd.org
+```
+ 
+Output:
+ 
+```
+ https://freebsd.org:443 ⟶ January 21, 2020
+         days left: 58
+```
+ 
+or a text file of domains such as this:
 
 ```
 https://freebsd.org
 https://openbsd.org
 ```
 
-and give it a threshold of the number of days of validity. For example if I am interested in 
-highlighting cases where there is less than 60 days of certificate validity this value is 60.
+Input:
+
+```
+./certdates --domains="domains.txt" --threshold=60
+```
+
+Output:
+
+![output-img.png](output-img.png)
+
+and give it a threshold of the number of days of validity. For example if you are interested in 
+highlighting cases where there is less than 60 days of certificate validity.  
 
 # Compiling
 
 You can compile this to a binary with:
 
 ```
-go build certdates
+go build main.go
 ```
 
-should make a binary in the same directory
+should make a binary in the same directory:
 
-# Usage
-
-```
-./certdates --domains="domains.txt" --threshold=60
+```bash
+./main
 ```
 
-Will result in this type of output
-
-![output-img.png](output-img.png)
-
-or just 
-
-```
-./check_certs
-```

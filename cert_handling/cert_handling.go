@@ -95,6 +95,27 @@ func ReadFile(filename string) (lines []string, err error) {
 	return lines, nil
 }
 
+// Given a string, parse the URL and do lookups for string
+// processThis - if true this means that the result was successful otherwise you should ignore
+func DoLookupForString(givenString string) (processThis bool, result LookupResult) {
+	thisResult := LookupResult{
+	}
+	if len(givenString) > 0 && !strings.HasPrefix(givenString,"#") {
+		urlObject, _ := url.Parse(givenString)
+		var port int
+
+		if urlObject.Port() == "" {
+			port = 443
+		} else {
+			port, _ = strconv.Atoi(urlObject.Port())
+		}
+
+		thisResult = DoLookup(urlObject.Hostname(), port)
+		return true, thisResult
+	}
+
+	return false, thisResult
+}
 
 // Given a filename of domains, parse URLs and do lookups for
 // everything - return a slice of results.
@@ -102,21 +123,11 @@ func DoLookupsForFile(givenFilename string) (results []LookupResult) {
 
 	lines, _ := ReadFile(givenFilename)
 	for _, line := range lines {
-		if len(line) > 0 && !strings.HasPrefix(line,"#") {
-			urlObject, _ := url.Parse(line)
-			var port int
-
-			if urlObject.Port() == "" {
-				port = 443
-			} else {
-				port, _ = strconv.Atoi(urlObject.Port())
-			}
-
-			thisResult := DoLookup(urlObject.Hostname(), port)
+		proc, thisResult := DoLookupForString(line)
+		if proc {
 			results = append(results, thisResult)
 		}
 	}
-
 	return results
 }
 
@@ -128,6 +139,24 @@ func DaysLeft(givenDate time.Time) (daysLeft int) {
 	return int(days)
 }
 
+// Given a LookupResult object print the result to the screen
+func PrintResult(givenResult LookupResult, givenThreshold int) {
+	if givenResult.Err == nil {
+		fmt.Print("https://" + givenResult.Hostname + ":" + strconv.Itoa(givenResult.Port) + " ⟶ " + givenResult.Expiry.Format("January 02, 2006") + "\n")
+		if givenResult.DaysLeft < givenThreshold {
+			fmt.Printf(WarningColor,"\tdays left: " + strconv.Itoa(givenResult.DaysLeft))
+			fmt.Println()
+		} else {
+			fmt.Printf(NoticeColor,"\tdays left: " + strconv.Itoa(givenResult.DaysLeft))
+			fmt.Println()
+		}
+	} else {
+		fmt.Printf(ErrorColor, "https://" + givenResult.Hostname + ":" + strconv.Itoa(givenResult.Port) + "\n")
+		fmt.Printf(ErrorColor, "\t" +  givenResult.Err.Error() + "\n")
+	}
+	fmt.Println()
+}
+
 // given a filename (text file of all domains) and a threshold, output a certificate
 // validity report to screen.
 func OutputCertificateValidityReport(givenFilename string, warningThreshold int) {
@@ -136,19 +165,6 @@ func OutputCertificateValidityReport(givenFilename string, warningThreshold int)
 	finishedLookups := DoLookupsForFile(givenFilename)
 	theSpinner.Stop()
 	for _, thisResult := range finishedLookups {
-		if thisResult.Err == nil {
-			fmt.Print("https://" + thisResult.Hostname + ":" + strconv.Itoa(thisResult.Port) + " ⟶ " + thisResult.Expiry.Format("January 02, 2006") + "\n")
-			if thisResult.DaysLeft < warningThreshold {
-				fmt.Printf(WarningColor,"\tdays left: " + strconv.Itoa(thisResult.DaysLeft))
-				fmt.Println()
-			} else {
-				fmt.Printf(NoticeColor,"\tdays left: " + strconv.Itoa(thisResult.DaysLeft))
-				fmt.Println()
-			}
-		} else {
-			fmt.Printf(ErrorColor, "https://" + thisResult.Hostname + ":" + strconv.Itoa(thisResult.Port) + "\n")
-			fmt.Printf(ErrorColor, "\t" +  thisResult.Err.Error() + "\n")
-		}
-		fmt.Println()
+		PrintResult(thisResult, warningThreshold)
 	}
 }
